@@ -1,12 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>할 일</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>할 일 관리</h1>
+    </header>
+
+    <section id="progress-area" class="progress-area">
+      <p id="progress-text" class="progress-text">오늘 0 / 0 완료 (0%)</p>
+      <div class="progress-bar">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+    </section>
+
+    <section id="todo-form-area" class="todo-form-area">
+      <form id="todo-form" class="todo-form">
+        <input
+          type="text"
+          id="todo-input"
+          class="todo-input"
+          placeholder="할 일을 입력하세요"
+          autocomplete="off"
+        />
+        <select id="todo-category-select" class="todo-category-select">
+          <option value="work">업무</option>
+          <option value="personal">개인</option>
+          <option value="study">공부</option>
+        </select>
+        <button type="submit" class="add-btn">추가</button>
+      </form>
+    </section>
+
+    <nav id="category-tabs" class="category-tabs">
+      <button type="button" class="tab-btn active" data-category="all">전체</button>
+      <button type="button" class="tab-btn" data-category="work">업무</button>
+      <button type="button" class="tab-btn" data-category="personal">개인</button>
+      <button type="button" class="tab-btn" data-category="study">공부</button>
+    </nav>
+
+    <ul id="todo-list" class="todo-list"></ul>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
 </html>
