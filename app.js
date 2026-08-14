@@ -194,21 +194,53 @@ function renderTodos() {
 }
 
 /**
- * 오늘 등록된 할 일 기준으로 "오늘 X / Y 완료 (Z%)" 텍스트와 진행률 막대를 갱신한다.
- * (지연된 이전 항목은 집계에서 제외된다.)
+ * 오늘 등록된 할 일 완료 개수와 전체 개수로 "X / Y 완료 (Z%)" 형태의 문자열을 만든다.
+ * @param {Array<Object>} todos
+ * @returns {{ total: number, completedCount: number, percent: number, text: string }}
+ */
+function summarizeProgress(todos) {
+  const total = todos.length;
+  const completedCount = todos.filter((todo) => todo.completed).length;
+  const percent = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+
+  return { total, completedCount, percent, text: `${completedCount} / ${total} 완료 (${percent}%)` };
+}
+
+/**
+ * 오늘 등록된 할 일 기준으로 "오늘 X / Y 완료 (Z%)" 텍스트, 진행률 막대,
+ * 카테고리별 완료 현황을 갱신한다. (지연된 이전 항목은 집계에서 제외된다.)
  */
 function renderProgress() {
   const progressText = document.getElementById("progress-text");
   const progressBarFill = document.getElementById("progress-bar-fill");
-  if (!progressText || !progressBarFill) return;
+  const categoryList = document.getElementById("progress-category-list");
+  if (!progressText || !progressBarFill || !categoryList) return;
 
   const todayTodos = getTodos().filter((todo) => isSameDayAsToday(todo.createdAt));
-  const total = todayTodos.length;
-  const completedCount = todayTodos.filter((todo) => todo.completed).length;
-  const percent = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+  const overall = summarizeProgress(todayTodos);
 
-  progressText.textContent = `오늘 ${completedCount} / ${total} 완료 (${percent}%)`;
-  progressBarFill.style.width = `${percent}%`;
+  progressText.textContent = `오늘 ${overall.text}`;
+  progressBarFill.style.width = `${overall.percent}%`;
+
+  categoryList.innerHTML = "";
+  Object.keys(CATEGORY_LABELS).forEach((category) => {
+    const categoryTodos = todayTodos.filter((todo) => todo.category === category);
+    const summary = summarizeProgress(categoryTodos);
+
+    const li = document.createElement("li");
+    li.className = "progress-category-item";
+
+    const label = document.createElement("span");
+    label.className = `category-tag category-${category}`;
+    label.textContent = CATEGORY_LABELS[category];
+
+    const stat = document.createElement("span");
+    stat.className = "progress-category-stat";
+    stat.textContent = summary.text;
+
+    li.append(label, stat);
+    categoryList.appendChild(li);
+  });
 }
 
 /**

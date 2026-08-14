@@ -60,6 +60,27 @@ body {
   transition: width 0.2s ease;
 }
 
+.progress-category-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-category-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.progress-category-stat {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
 .category-tabs {
   display: flex;
   gap: 8px;
