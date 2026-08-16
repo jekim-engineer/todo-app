@@ -233,6 +233,13 @@ body {
   opacity: 0.9;
 }
 
+.category-hint {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  min-height: 1em;
+}
+
 /* 인라인 수정 모드 */
 .edit-title-input {
   flex: 1;

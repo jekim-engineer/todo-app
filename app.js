@@ -163,6 +163,31 @@ const CATEGORY_LABELS = {
   study: "공부",
 };
 
+// 카테고리별 자동 분류 키워드. 제목에 이 키워드가 포함되면 해당 카테고리로 추정한다.
+const CATEGORY_KEYWORDS = {
+  work: ["회의", "미팅", "보고서", "보고", "발표", "이메일", "메일", "프로젝트", "출장", "계약", "클라이언트", "고객", "마감", "결재", "협업", "워크숍", "회사"],
+  personal: ["병원", "약속", "쇼핑", "장보기", "운동", "헬스", "가족", "친구", "생일", "여행", "청소", "빨래", "요리", "은행", "보험", "데이트"],
+  study: ["공부", "시험", "과제", "숙제", "강의", "수업", "독서", "논문", "스터디", "학습", "자격증", "강좌", "책"],
+};
+
+/**
+ * 제목에 포함된 키워드를 기준으로 카테고리를 추정한다.
+ * work → personal → study 순으로 검사해 가장 먼저 일치하는 카테고리를 반환한다.
+ * 일치하는 키워드가 없으면 null.
+ * @param {string} title
+ * @returns {"work"|"personal"|"study"|null}
+ */
+function detectCategoryFromTitle(title) {
+  const trimmed = title.trim();
+  if (!trimmed) return null;
+
+  return (
+    Object.keys(CATEGORY_KEYWORDS).find((category) =>
+      CATEGORY_KEYWORDS[category].some((keyword) => trimmed.includes(keyword))
+    ) ?? null
+  );
+}
+
 /**
  * getTodos()로 목록을 가져와 activeFilter에 맞는 항목만 최신순으로 정렬해 #todo-list에 렌더링한다.
  * editingId와 일치하는 항목은 인라인 수정 모드로 렌더링된다.
@@ -336,10 +361,12 @@ document.addEventListener("DOMContentLoaded", renderTodos);
 
 let editingId = null;
 let activeFilter = getActiveFilter();
+let categoryManuallySet = false; // 사용자가 카테고리를 직접 선택하면 자동 분류를 멈춘다.
 
 const todoForm = document.getElementById("todo-form");
 const todoInput = document.getElementById("todo-input");
 const todoCategorySelect = document.getElementById("todo-category-select");
+const categoryHintEl = document.getElementById("category-hint");
 const todoListEl = document.getElementById("todo-list");
 const toastContainer = document.getElementById("toast-container");
 const categoryTabsEl = document.getElementById("category-tabs");
@@ -352,8 +379,37 @@ todoForm.addEventListener("submit", (e) => {
 
   addTodo(title, todoCategorySelect.value);
   todoInput.value = "";
+  categoryManuallySet = false;
+  clearCategoryHint();
   renderTodos();
   todoInput.focus();
+});
+
+// 제목 입력 중 키워드 기반 자동 카테고리 분류
+todoInput.addEventListener("input", () => {
+  const value = todoInput.value;
+
+  if (!value.trim()) {
+    categoryManuallySet = false;
+    clearCategoryHint();
+    return;
+  }
+
+  if (categoryManuallySet) return;
+
+  const detected = detectCategoryFromTitle(value);
+  if (detected) {
+    todoCategorySelect.value = detected;
+    showCategoryHint(detected);
+  } else {
+    clearCategoryHint();
+  }
+});
+
+// 카테고리를 직접 선택하면 이후 자동 분류가 이를 덮어쓰지 않는다.
+todoCategorySelect.addEventListener("change", () => {
+  categoryManuallySet = true;
+  clearCategoryHint();
 });
 
 // 체크박스 토글 / 수정 / 삭제 / 인라인 수정 저장·취소 (이벤트 위임)
@@ -461,6 +517,23 @@ function updateActiveTabUI() {
 }
 
 /**
+ * 자동 분류된 카테고리를 입력 폼 아래에 안내 문구로 표시한다.
+ * @param {"work"|"personal"|"study"} category
+ */
+function showCategoryHint(category) {
+  if (!categoryHintEl) return;
+  categoryHintEl.textContent = `💡 "${CATEGORY_LABELS[category]}"(으)로 자동 분류됨`;
+}
+
+/**
+ * 카테고리 자동 분류 안내 문구를 지운다.
+ */
+function clearCategoryHint() {
+  if (!categoryHintEl) return;
+  categoryHintEl.textContent = "";
+}
+
+/**
  * 삭제 직후 3초간 되돌리기 토스트를 표시한다.
  * @param {Object} deletedTodo
  */
@@ -507,3 +580,4 @@ window.deleteTodo = deleteTodo;
 window.toggleComplete = toggleComplete;
 window.isOverdue = isOverdue;
 window.renderTodos = renderTodos;
+window.detectCategoryFromTitle = detectCategoryFromTitle;
