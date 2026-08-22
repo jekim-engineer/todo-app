@@ -129,6 +129,16 @@ body {
   font-size: 0.9rem;
 }
 
+.todo-due-date-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--color-text);
+}
+
 .todo-category-select {
   width: 100%;
   padding: 10px 12px;
@@ -228,6 +238,10 @@ body {
   color: var(--color-overdue);
 }
 
+.todo-item.overdue .due-date {
+  color: var(--color-overdue);
+}
+
 .todo-item.completed {
   opacity: 0.6;
 }
@@ -249,6 +263,13 @@ body {
   min-width: 0;
   font-size: 0.95rem;
   word-break: break-word;
+}
+
+.due-date {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 .category-tag {
@@ -307,6 +328,14 @@ body {
 }
 
 .edit-title-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.edit-due-date-input {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--color-border);
@@ -438,11 +467,15 @@ body {
     order: 1;
   }
 
-  .category-tag {
+  .due-date {
     order: 2;
   }
 
-  .todo-actions {
+  .category-tag {
     order: 3;
+  }
+
+  .todo-actions {
+    order: 4;
   }
 }

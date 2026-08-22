@@ -61,14 +61,16 @@ function generateId() {
  * 새 할 일을 생성하여 저장하고, 생성된 항목을 반환한다.
  * @param {string} title
  * @param {"work"|"personal"|"study"} category
+ * @param {string|null} [dueDate] "YYYY-MM-DD" 형식의 마감일. 없으면 null.
  * @returns {Object}
  */
-function addTodo(title, category) {
+function addTodo(title, category, dueDate) {
   const todos = getTodos();
   const newTodo = {
     id: generateId(),
     title,
     category,
+    dueDate: dueDate || null,
     completed: false,
     createdAt: new Date().toISOString(),
     completedAt: null,
@@ -145,14 +147,26 @@ function isSameDayAsToday(isoDateString) {
 }
 
 /**
+ * 오늘 날짜를 "YYYY-MM-DD" 형식(로컬 기준)으로 반환한다.
+ * @returns {string}
+ */
+function getTodayDateString() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * 할 일이 기한을 넘겼는지 여부를 반환한다.
- * completed가 false이고 createdAt의 날짜(연-월-일)가 오늘과 다르면 true.
+ * completed가 false이고 dueDate가 오늘보다 이전이면 true. dueDate가 없으면 false.
  * @param {Object} todo
  * @returns {boolean}
  */
 function isOverdue(todo) {
-  if (todo.completed) return false;
-  return !isSameDayAsToday(todo.createdAt);
+  if (todo.completed || !todo.dueDate) return false;
+  return todo.dueDate < getTodayDateString();
 }
 
 // ===== 렌더링 계층 (Rendering Layer) =====
@@ -198,7 +212,12 @@ function renderTodos() {
 
   const todos = getTodos()
     .filter((todo) => activeFilter === "all" || todo.category === activeFilter)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    .sort((a, b) => {
+      if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+      if (a.dueDate) return -1;
+      if (b.dueDate) return 1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
 
   list.innerHTML = "";
 
@@ -308,7 +327,16 @@ function buildDisplayItem(todo) {
   actions.className = "todo-actions";
   actions.append(editBtn, deleteBtn);
 
-  li.append(checkbox, title, categoryTag, actions);
+  li.append(checkbox, title);
+
+  if (todo.dueDate) {
+    const dueDateEl = document.createElement("span");
+    dueDateEl.className = "due-date";
+    dueDateEl.textContent = `📅 ${todo.dueDate}`;
+    li.append(dueDateEl);
+  }
+
+  li.append(categoryTag, actions);
   return li;
 }
 
@@ -326,6 +354,11 @@ function buildEditItem(todo) {
   titleInput.type = "text";
   titleInput.className = "edit-title-input";
   titleInput.value = todo.title;
+
+  const dueDateInput = document.createElement("input");
+  dueDateInput.type = "date";
+  dueDateInput.className = "edit-due-date-input";
+  dueDateInput.value = todo.dueDate || "";
 
   const categorySelect = document.createElement("select");
   categorySelect.className = "edit-category-select";
@@ -351,7 +384,7 @@ function buildEditItem(todo) {
   actions.className = "todo-actions";
   actions.append(saveBtn, cancelBtn);
 
-  li.append(titleInput, categorySelect, actions);
+  li.append(titleInput, dueDateInput, categorySelect, actions);
   return li;
 }
 
@@ -365,6 +398,7 @@ let categoryManuallySet = false; // 사용자가 카테고리를 직접 선택�
 
 const todoForm = document.getElementById("todo-form");
 const todoInput = document.getElementById("todo-input");
+const todoDueDateInput = document.getElementById("todo-due-date-input");
 const todoCategorySelect = document.getElementById("todo-category-select");
 const categoryHintEl = document.getElementById("category-hint");
 const todoListEl = document.getElementById("todo-list");
@@ -377,8 +411,9 @@ todoForm.addEventListener("submit", (e) => {
   const title = todoInput.value.trim();
   if (!title) return;
 
-  addTodo(title, todoCategorySelect.value);
+  addTodo(title, todoCategorySelect.value, todoDueDateInput.value || null);
   todoInput.value = "";
+  todoDueDateInput.value = "";
   categoryManuallySet = false;
   clearCategoryHint();
   renderTodos();
@@ -483,7 +518,8 @@ function saveEdit(id) {
   if (!title) return;
 
   const category = li.querySelector(".edit-category-select").value;
-  updateTodo(id, { title, category });
+  const dueDate = li.querySelector(".edit-due-date-input").value || null;
+  updateTodo(id, { title, category, dueDate });
   editingId = null;
   renderTodos();
 }
