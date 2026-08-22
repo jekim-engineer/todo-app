@@ -6,6 +6,7 @@
 
 const STORAGE_KEY = "todos";
 const ACTIVE_FILTER_KEY = "activeFilter";
+const BG_COLOR_KEY = "bgColor";
 
 /**
  * 저장된 카테고리 필터를 반환한다. 저장된 값이 없으면 "all".
@@ -21,6 +22,30 @@ function getActiveFilter() {
  */
 function saveActiveFilter(filter) {
   localStorage.setItem(ACTIVE_FILTER_KEY, filter);
+}
+
+/**
+ * 저장된 전체 배경색을 반환한다. 저장된 값이 없으면 null.
+ * @returns {string|null}
+ */
+function getBgColor() {
+  return localStorage.getItem(BG_COLOR_KEY);
+}
+
+/**
+ * 전체 배경색을 localStorage에 저장한다.
+ * @param {string} color "#rrggbb" 형식
+ */
+function saveBgColor(color) {
+  localStorage.setItem(BG_COLOR_KEY, color);
+}
+
+/**
+ * body 배경색을 적용한다.
+ * @param {string} color "#rrggbb" 형식
+ */
+function applyBgColor(color) {
+  document.body.style.backgroundColor = color;
 }
 
 /**
@@ -404,6 +429,19 @@ const categoryHintEl = document.getElementById("category-hint");
 const todoListEl = document.getElementById("todo-list");
 const toastContainer = document.getElementById("toast-container");
 const categoryTabsEl = document.getElementById("category-tabs");
+const bgColorPicker = document.getElementById("bg-color-picker");
+
+// 저장된 배경색이 있으면 적용
+const savedBgColor = getBgColor();
+if (savedBgColor && bgColorPicker) {
+  applyBgColor(savedBgColor);
+  bgColorPicker.value = savedBgColor;
+}
+
+bgColorPicker.addEventListener("input", () => {
+  applyBgColor(bgColorPicker.value);
+  saveBgColor(bgColorPicker.value);
+});
 
 /**
  * 날짜 입력란에 값이 있으면 네이티브 텍스트를 보이게 하고,

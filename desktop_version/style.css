@@ -32,9 +32,32 @@ body {
   padding: 40px 48px 80px;
 }
 
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
 .app-header h1 {
   font-size: 2rem;
-  margin: 0 0 32px;
+  margin: 0;
+}
+
+.color-picker-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.bg-color-picker {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  position: absolute;
 }
 
 /* 데스크톱 2단 레이아웃: 왼쪽 사이드바 + 오른쪽 할 일 목록 */
@@ -131,6 +154,8 @@ body {
 
 .due-date-field {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .due-date-placeholder {

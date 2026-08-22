@@ -28,9 +28,32 @@ body {
   padding: 24px 16px 60px;
 }
 
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
 .app-header h1 {
   font-size: 1.5rem;
-  margin: 0 0 20px;
+  margin: 0;
+}
+
+.color-picker-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.bg-color-picker {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  position: absolute;
 }
 
 .progress-area,
@@ -224,6 +247,8 @@ body {
 
 .due-date-field {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .due-date-placeholder {
