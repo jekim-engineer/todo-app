@@ -324,18 +324,9 @@ function renderProgress() {
     const li = document.createElement("li");
     li.className = "progress-category-item";
 
-    const header = document.createElement("div");
-    header.className = "progress-category-header";
-
     const label = document.createElement("span");
     label.className = `category-tag category-${category}`;
     label.textContent = CATEGORY_LABELS[category];
-
-    const stat = document.createElement("span");
-    stat.className = "progress-category-stat";
-    stat.textContent = summary.text;
-
-    header.append(label, stat);
 
     const bar = document.createElement("div");
     bar.className = "progress-category-bar";
@@ -345,7 +336,11 @@ function renderProgress() {
     barFill.style.width = `${summary.percent}%`;
     bar.appendChild(barFill);
 
-    li.append(header, bar);
+    const stat = document.createElement("span");
+    stat.className = "progress-category-stat";
+    stat.textContent = summary.text;
+
+    li.append(label, bar, stat);
     categoryList.appendChild(li);
   });
 }

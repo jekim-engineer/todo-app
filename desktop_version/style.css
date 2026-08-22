@@ -134,19 +134,13 @@ body {
 
 .progress-category-item {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.progress-category-header {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
 }
 
 .progress-category-bar {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 6px;
   background: var(--color-border);
   border-radius: 999px;
@@ -173,6 +167,8 @@ body {
 }
 
 .progress-category-stat {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 0.8rem;
   color: var(--color-text-muted);
 }
