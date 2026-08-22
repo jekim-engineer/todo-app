@@ -218,7 +218,7 @@ body {
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.9rem;
-  color: var(--color-text-muted);
+  color: #9ca3af;
   pointer-events: none;
 }
 
