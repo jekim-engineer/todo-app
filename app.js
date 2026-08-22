@@ -71,6 +71,7 @@ function saveTextColor(color) {
  */
 function applyTextColor(color) {
   document.body.style.color = color;
+  document.documentElement.style.setProperty("--color-text-muted", color);
 }
 
 /**
