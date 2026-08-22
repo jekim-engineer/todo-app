@@ -7,6 +7,7 @@
 const STORAGE_KEY = "todos";
 const ACTIVE_FILTER_KEY = "activeFilter";
 const BG_COLOR_KEY = "bgColor";
+const TEXT_COLOR_KEY = "textColor";
 
 /**
  * 저장된 카테고리 필터를 반환한다. 저장된 값이 없으면 "all".
@@ -46,6 +47,30 @@ function saveBgColor(color) {
  */
 function applyBgColor(color) {
   document.body.style.backgroundColor = color;
+}
+
+/**
+ * 저장된 전체 글자색을 반환한다. 저장된 값이 없으면 null.
+ * @returns {string|null}
+ */
+function getTextColor() {
+  return localStorage.getItem(TEXT_COLOR_KEY);
+}
+
+/**
+ * 전체 글자색을 localStorage에 저장한다.
+ * @param {string} color "#rrggbb" 형식
+ */
+function saveTextColor(color) {
+  localStorage.setItem(TEXT_COLOR_KEY, color);
+}
+
+/**
+ * body 글자색을 적용한다.
+ * @param {string} color "#rrggbb" 형식
+ */
+function applyTextColor(color) {
+  document.body.style.color = color;
 }
 
 /**
@@ -299,6 +324,9 @@ function renderProgress() {
     const li = document.createElement("li");
     li.className = "progress-category-item";
 
+    const header = document.createElement("div");
+    header.className = "progress-category-header";
+
     const label = document.createElement("span");
     label.className = `category-tag category-${category}`;
     label.textContent = CATEGORY_LABELS[category];
@@ -307,7 +335,17 @@ function renderProgress() {
     stat.className = "progress-category-stat";
     stat.textContent = summary.text;
 
-    li.append(label, stat);
+    header.append(label, stat);
+
+    const bar = document.createElement("div");
+    bar.className = "progress-category-bar";
+
+    const barFill = document.createElement("div");
+    barFill.className = `progress-category-bar-fill progress-bar-${category}`;
+    barFill.style.width = `${summary.percent}%`;
+    bar.appendChild(barFill);
+
+    li.append(header, bar);
     categoryList.appendChild(li);
   });
 }
@@ -430,17 +468,29 @@ const todoListEl = document.getElementById("todo-list");
 const toastContainer = document.getElementById("toast-container");
 const categoryTabsEl = document.getElementById("category-tabs");
 const bgColorPicker = document.getElementById("bg-color-picker");
+const textColorPicker = document.getElementById("text-color-picker");
 
-// 저장된 배경색이 있으면 적용
+// 저장된 배경색/글자색이 있으면 적용
 const savedBgColor = getBgColor();
 if (savedBgColor && bgColorPicker) {
   applyBgColor(savedBgColor);
   bgColorPicker.value = savedBgColor;
 }
 
+const savedTextColor = getTextColor();
+if (savedTextColor && textColorPicker) {
+  applyTextColor(savedTextColor);
+  textColorPicker.value = savedTextColor;
+}
+
 bgColorPicker.addEventListener("input", () => {
   applyBgColor(bgColorPicker.value);
   saveBgColor(bgColorPicker.value);
+});
+
+textColorPicker.addEventListener("input", () => {
+  applyTextColor(textColorPicker.value);
+  saveTextColor(textColorPicker.value);
 });
 
 /**
