@@ -33,11 +33,14 @@
               placeholder="할 일을 입력하세요"
               autocomplete="off"
             />
-            <input
-              type="date"
-              id="todo-due-date-input"
-              class="todo-due-date-input"
-            />
+            <div class="due-date-field">
+              <input
+                type="date"
+                id="todo-due-date-input"
+                class="todo-due-date-input"
+              />
+              <span id="due-date-placeholder" class="due-date-placeholder">일정 설정</span>
+            </div>
             <select id="todo-category-select" class="todo-category-select">
               <option value="work">업무</option>
               <option value="personal">개인</option>

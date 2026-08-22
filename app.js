@@ -405,6 +405,17 @@ const todoListEl = document.getElementById("todo-list");
 const toastContainer = document.getElementById("toast-container");
 const categoryTabsEl = document.getElementById("category-tabs");
 
+/**
+ * 날짜 입력란에 값이 있으면 네이티브 텍스트를 보이게 하고,
+ * 비어 있으면 "일정 설정" 안내 문구가 보이도록 상태를 갱신한다.
+ */
+function updateDueDatePlaceholder() {
+  todoDueDateInput.classList.toggle("has-value", Boolean(todoDueDateInput.value));
+}
+
+todoDueDateInput.addEventListener("input", updateDueDatePlaceholder);
+updateDueDatePlaceholder();
+
 // 할 일 추가
 todoForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -414,6 +425,7 @@ todoForm.addEventListener("submit", (e) => {
   addTodo(title, todoCategorySelect.value, todoDueDateInput.value || null);
   todoInput.value = "";
   todoDueDateInput.value = "";
+  updateDueDatePlaceholder();
   categoryManuallySet = false;
   clearCategoryHint();
   renderTodos();

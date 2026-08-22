@@ -222,6 +222,20 @@ body {
   font-size: 0.9rem;
 }
 
+.due-date-field {
+  position: relative;
+}
+
+.due-date-placeholder {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
 .todo-due-date-input {
   padding: 8px 10px;
   border: 1px solid var(--color-border);
@@ -229,6 +243,14 @@ body {
   font-size: 0.9rem;
   background: #fff;
   color: var(--color-text);
+}
+
+.todo-due-date-input:not(.has-value) {
+  color: transparent;
+}
+
+.todo-due-date-input.has-value + .due-date-placeholder {
+  display: none;
 }
 
 .todo-category-select {
@@ -354,7 +376,7 @@ body {
     flex-basis: 100%;
   }
 
-  .todo-due-date-input {
+  .due-date-field {
     flex-basis: 100%;
   }
 
